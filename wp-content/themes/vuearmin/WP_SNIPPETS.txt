@@ -1,0 +1,107 @@
+// Online form database table creation
+----------------------------------------------------
+
+CREATE TABLE `formdatabase_emails` (
+  `form_id` int(11)  PRIMARY KEY AUTO_INCREMENT,
+  `form_from` varchar(50) NOT NULL,
+  `form_subject` varchar(500) NOT NULL,
+  `date_sent` datetime NOT NULL,
+  `form_content` longtext NOT NULL,
+  `status` enum('new','read','deleted') NOT NULL,
+  `email_type` enum('inbox','trash') NOT NULL,
+  `attachments` text NOT NULL,
+  `date_deleted` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `formdatabase_users` (
+  `user_id` int(11) PRIMARY KEY AUTO_INCREMENT,
+  `user_email` varchar(20) NOT NULL,
+  `user_name` varchar(20) NOT NULL,
+  `user_pass` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+================================================================================
+
+
+// add this code sa head before sa "wp_head" (para ni dili matabunan atong logo ug katung close menu sa dashboard)
+---------------------------------------------------
+
+<?php if ( is_user_logged_in() ) { ?>
+<style>
+@media only screen
+and (max-width : 800px) {
+nav.toggle_right_style{top:32px;}
+}
+@media only screen
+and (max-width : 782px) {
+nav.toggle_right_style{top:46px;}
+}
+</style>
+<?php }?>
+
+--------------------------------------------------
+
+//widget
+<?php dynamic_sidebar('header_info');?>
+
+//link to home
+<?php echo get_home_url(); ?>
+
+//alt value of logo
+<?php echo get_bloginfo('name');?>
+
+//link all external files on WP
+<?php bloginfo('template_url');?>/
+
+//main content area
+<?php get_template_part( 'loop', 'page' ); ?>
+
+//dynamic menu
+<?php wp_nav_menu( array('theme_location' => 'primary' ) ); ?>
+
+//widgets
+<?php dynamic_sidebar('header_info');?>
+
+//sections not to be seen on other pages
+<?php if ( is_front_page() ) { get_includes('middle'); }?>
+
+
+/*BANNER*/
+//placed before slider class
+<?php if (is_front_page() ) { ?>
+
+//placed after bnr_info class
+
+<?php } else { ?>
+<div class="non_ban">
+  <?php if (has_post_thumbnail() ) {?>
+    <div class="non_ban_img">
+      <?php the_post_thumbnail('full');?>
+    </div>
+  <?php }else{ ?>
+    <div class="non_ban_img">
+      <figure><img src="<?php bloginfo('template_url');?>/images/slider/non_ban_img.jpg" alt="image" /></figure>
+    </div>
+  <?php } ?>
+
+  <div class="page_title">
+    <?php if(!is_home() && !is_author() && !is_category() && !is_tag() && !is_single()) { ?>
+      <h1 class="h1_title"><?php the_title(); ?></h1>
+      <?php echo do_shortcode("[short_title id='" . get_the_ID() . "']"); ?>
+    <?php } else { ?>
+      <h1 class="h1_title">Blog</h1>
+    <?php } ?>
+  </div>
+</div>
+<?php }?>
+
+/*MAIN*/
+//breadcrumbs
+<?php if(!is_front_page()) : ?><div class="breadcrumbs">
+  <?php
+if(function_exists('bcn_display'))
+{
+    bcn_display();
+}?>
+</div><?php endif; ?>
